@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 
-import socket
-import sys
-
-HOST_SERVER = '127.0.0.1'  # Standard loopback interface address (localhost)
-PORT_SERVER = 4535  # Port to listen on (non-privileged ports are > 1023)
-HOST_CLIENT = '127.0.0.1'
-PORT_CLIENT = 4532  # Port to listen on (non-privileged ports are > 1023)
+import socket, sys, argparse
 
 def sendCommandToHamlib(sock_hamlib, command):
     b_cmd = bytearray()
@@ -56,6 +50,15 @@ def setUplinkFreq(sock_hamlib, freq):
       return retCode
 
 def main():
+    ### Option Parsing ###
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", dest="host_rigctld", type=str, required=True, help="specify which host to connect to")
+    parser.add_argument("-p", dest="port_rigctld", type=int, required=True, help="specify which port to connect to")
+    parser.add_argument("-l", dest="host_listen", type=str, required=True, help="specify which host to listen on")
+    parser.add_argument("-P", dest="port_listen", type=int, required=True, help="specify which port to listen on")
+
+    args = parser.parse_args()
+
     ###############################################
     # start sockets for gpredict und hamlib
     ###############################################
@@ -63,13 +66,13 @@ def main():
     # start tcp client
     try:
         sock_hamlib = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock_hamlib.connect((HOST_CLIENT, PORT_CLIENT))
+        sock_hamlib.connect((args.host_rigctld, args.port_rigctld))
     except socket.error as e:
         print('Problem: ', e)
 
     # start tcp server
     sock_gpredict = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock_gpredict.bind((HOST_SERVER, PORT_SERVER))
+    sock_gpredict.bind((args.host_listen, args.port_listen))
     sock_gpredict.listen(1)
     while True:
         conn, addr = sock_gpredict.accept()
