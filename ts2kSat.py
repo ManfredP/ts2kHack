@@ -15,7 +15,7 @@ def sendCommandToHamlib(sock_hamlib, command):
     waiting_for_answer = True
     return_value = ''
     while waiting_for_answer:
-        return_value = sock_hamlib.recv(100).decode('utf-8')
+        return_value = sock_hamlib.recv(128).decode('utf-8')
         if len(return_value) > 0:
             waiting_for_answer = False
 
@@ -75,7 +75,7 @@ def main():
         conn, addr = sock_gpredict.accept()
         print('Connected by', addr)
         while 1:
-            data = conn.recv(1000)
+            data = conn.recv(128)
             print('gpredict: ' + data.decode('utf-8').replace('\n', ''))
             if not data: break
             if data[0] in ['F', 'I']:
