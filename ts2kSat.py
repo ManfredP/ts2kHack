@@ -60,17 +60,6 @@ def main():
 
     args = parser.parse_args()
 
-    ###############################################
-    # start sockets for gpredict und hamlib
-    ###############################################
-
-    # start tcp client
-    try:
-        sock_hamlib = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock_hamlib.connect((args.host_rigctld, args.port_rigctld))
-    except socket.error as e:
-        print('Problem: ', e)
-
     # start tcp server
     sock_gpredict = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock_gpredict.bind((args.host_listen, args.port_listen))
@@ -79,6 +68,11 @@ def main():
         conn, addr = sock_gpredict.accept()
         if args.debug:
           print('Connected by', addr)
+        try:
+          sock_hamlib = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+          sock_hamlib.connect((args.host_rigctld, args.port_rigctld))
+        except socket.error as e:
+          print('Problem connecting to rigctld: ', e)
         while 1:
             data = conn.recv(128)
             if args.debug:
@@ -107,5 +101,6 @@ def main():
         if args.debug:
           print('connect closed')
         conn.close()
+        sock_hamlib.close()
 
 main()
