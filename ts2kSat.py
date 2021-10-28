@@ -56,6 +56,7 @@ def main():
     parser.add_argument("-p", dest="port_rigctld", type=int, required=True, help="specify which port to connect to")
     parser.add_argument("-l", dest="host_listen", type=str, required=True, help="specify which host to listen on")
     parser.add_argument("-P", dest="port_listen", type=int, required=True, help="specify which port to listen on")
+    parser.add_argument("-d", dest="debug", type=bool, default=False, help="print debug messages")
 
     args = parser.parse_args()
 
@@ -76,10 +77,12 @@ def main():
     sock_gpredict.listen(1)
     while True:
         conn, addr = sock_gpredict.accept()
-        print('Connected by', addr)
+        if args.debug:
+          print('Connected by', addr)
         while 1:
             data = conn.recv(128)
-            print('gpredict: ' + data.decode('utf-8').replace('\n', ''))
+            if args.debug:
+              print('gpredict: ' + data.decode('utf-8').replace('\n', ''))
             if not data: break
             if data[0] in ['F', 'I']:
                 # get downlink and uplink from gpredict
@@ -101,7 +104,8 @@ def main():
                     conn.send(uplinkFreq.encode())
             else:
                 conn.send(b'RPRT 0\n')  # Return Data OK to gpredict
-        print('connect closed')
+        if args.debug:
+          print('connect closed')
         conn.close()
 
 main()
