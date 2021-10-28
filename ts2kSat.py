@@ -49,6 +49,9 @@ def setUplinkFreq(sock_hamlib, freq):
     else:
       return retCode
 
+def switchToSatMode(sock_hamlib):
+    sendCommandToHamlib(sock_hamlib, 'W SA1010000; 0')
+
 def main():
     ### Option Parsing ###
     parser = argparse.ArgumentParser()
@@ -73,6 +76,7 @@ def main():
           sock_hamlib.connect((args.host_rigctld, args.port_rigctld))
         except socket.error as e:
           print('Problem connecting to rigctld: ', e)
+        switchToSatMode(sock_hamlib)
         while 1:
             data = conn.recv(128)
             if args.debug:
