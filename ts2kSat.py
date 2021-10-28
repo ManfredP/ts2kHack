@@ -77,6 +77,8 @@ def main():
         except socket.error as e:
           print('Problem connecting to rigctld: ', e)
         switchToSatMode(sock_hamlib)
+        setDownlinkFreq(sock_hamlib, '050000000')
+        setUplinkFreq(sock_hamlib, '1240000000')
         while 1:
             data = conn.recv(128)
             if args.debug:
