@@ -52,6 +52,27 @@ def setUplinkFreq(sock_hamlib, freq):
 def switchToSatMode(sock_hamlib):
     sendCommandToHamlib(sock_hamlib, 'W SA1010000; 0')
 
+def switchVfos(sock_hamlib):
+  sendCommandToHamlib(sock_hamlib, 'W FILLIN TF; 0')
+
+def sameBand(freqA, freqB):
+  return True
+
+def setFreqAndSwitchVfoIfNeeded(sock_hamlib, newFreq, downlink):
+  if downlink:
+    currentFreq = getDownlinkFreq(sock_hamlib)
+  else:
+    currentFreq = getUplinkFreq(sock_hamlib)
+  if 'RPRT -' in currentFreq:
+    return currentFreq
+  if sameBand(currentFreq, newFreq):
+    switchVfos(sock_hamlib)
+  if downlink:
+    retcode = setDownlinkFreq(sock_hamlib, newfreq)
+  else:
+    retcode = setUplinkFreq(sock_hamlib, newfreq)
+  return retcode
+
 def main():
     ### Option Parsing ###
     parser = argparse.ArgumentParser()
