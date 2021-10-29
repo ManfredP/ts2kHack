@@ -59,7 +59,7 @@ def main():
     parser.add_argument("-p", dest="port_rigctld", type=int, required=True, help="specify which port to connect to")
     parser.add_argument("-l", dest="host_listen", type=str, required=True, help="specify which host to listen on")
     parser.add_argument("-P", dest="port_listen", type=int, required=True, help="specify which port to listen on")
-    parser.add_argument("-d", dest="debug", type=bool, default=False, help="print debug messages")
+    parser.add_argument("-d", dest="debug", default=False, action='store_true', help="print debug messages")
 
     args = parser.parse_args()
 
