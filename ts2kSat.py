@@ -53,7 +53,7 @@ def switchToSatMode(sock_hamlib):
     sendCommandToHamlib(sock_hamlib, 'W SA1010000; 0')
 
 def switchVfos(sock_hamlib):
-  sendCommandToHamlib(sock_hamlib, 'W FILLIN TF; 0')
+  sendCommandToHamlib(sock_hamlib, 'W TS1; 0')
 
 def sameBand(freqA, freqB):
   return True
