@@ -2,6 +2,8 @@
 
 import socket, sys, argparse
 
+noError = True
+
 def sendCommandToHamlib(sock_hamlib, command):
     b_cmd = bytearray()
     b_cmd.extend(map(ord, command + '\n'))
@@ -48,6 +50,18 @@ def setUplinkFreq(sock_hamlib, freq):
       return retCodeF
     else:
       return retCode
+
+def setFreq(sock_hamlib, freq, vfo):
+  global noError
+  retCode = sendCommandToHamlib(sock_hamlib, 'V ' + vfo)
+  if retCode == "RPRT 0\n":
+    retCode = sendCommandToHamlib(sock_hamlib, 'F ' + freq)
+    if retCode != "RPRT 0\n" and noError:
+      switchVfos(sock_hamlib)
+      retCode = sendCommandToHamlib(sock_hamlib, 'F ' + freq)
+      if retCode != "RPRT 0\n":
+        noError = False
+  return retCode
 
 def switchToSatMode(sock_hamlib):
     sendCommandToHamlib(sock_hamlib, 'W SA1010000; 0')
