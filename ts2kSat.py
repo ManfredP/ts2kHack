@@ -27,27 +27,11 @@ def getDownlinkFreq(sock_hamlib):
     else:
       return retCode
 
-def setDownlinkFreq(sock_hamlib, freq):
-    retCode = sendCommandToHamlib(sock_hamlib, 'V VFOA')
-    if retCode == "RPRT 0\n":
-      retCodeF = sendCommandToHamlib(sock_hamlib, 'F ' + freq)
-      return retCodeF
-    else:
-      return retCode
-
 def getUplinkFreq(sock_hamlib):
     retCode = sendCommandToHamlib(sock_hamlib, 'V VFOB')
     if retCode == "RPRT 0\n":
       freq = sendCommandToHamlib(sock_hamlib, 'f')
       return freq
-    else:
-      return retCode
-
-def setUplinkFreq(sock_hamlib, freq):
-    retCode = sendCommandToHamlib(sock_hamlib, 'V VFOB')
-    if retCode == "RPRT 0\n":
-      retCodeF = sendCommandToHamlib(sock_hamlib, 'F ' + freq)
-      return retCodeF
     else:
       return retCode
 
@@ -71,24 +55,6 @@ def switchToSatMode(sock_hamlib):
 
 def switchVfos(sock_hamlib):
   sendCommandToHamlib(sock_hamlib, 'W TS1; 0')
-
-def sameBand(freqA, freqB):
-  return True
-
-def setFreqAndSwitchVfoIfNeeded(sock_hamlib, newFreq, downlink):
-  if downlink:
-    currentFreq = getDownlinkFreq(sock_hamlib)
-  else:
-    currentFreq = getUplinkFreq(sock_hamlib)
-  if 'RPRT -' in currentFreq:
-    return currentFreq
-  if sameBand(currentFreq, newFreq):
-    switchVfos(sock_hamlib)
-  if downlink:
-    retcode = setDownlinkFreq(sock_hamlib, newfreq)
-  else:
-    retcode = setUplinkFreq(sock_hamlib, newfreq)
-  return retcode
 
 def main():
     ### Option Parsing ###
