@@ -56,11 +56,14 @@ def setFreq(sock_hamlib, freq, vfo):
   retCode = sendCommandToHamlib(sock_hamlib, 'V ' + vfo)
   if retCode == "RPRT 0\n":
     retCode = sendCommandToHamlib(sock_hamlib, 'F ' + freq)
-    if retCode != "RPRT 0\n" and noError:
-      switchVfos(sock_hamlib)
-      retCode = sendCommandToHamlib(sock_hamlib, 'F ' + freq)
-      if retCode != "RPRT 0\n":
-        noError = False
+    if retCode != "RPRT 0\n":
+      if noError:
+        switchVfos(sock_hamlib)
+        retCode = sendCommandToHamlib(sock_hamlib, 'F ' + freq)
+        if retCode != "RPRT 0\n":
+          noError = False
+    else:
+      noError = True
   return retCode
 
 def switchToSatMode(sock_hamlib):
