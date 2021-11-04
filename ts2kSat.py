@@ -112,8 +112,6 @@ def main():
         except socket.error as e:
           print('Problem connecting to rigctld: ', e)
         switchToSatMode(sock_hamlib)
-        setDownlinkFreq(sock_hamlib, '050000000')
-        setUplinkFreq(sock_hamlib, '1240000000')
         while 1:
             data = conn.recv(128)
             if args.debug:
@@ -124,11 +122,11 @@ def main():
                 cut = data.decode('utf-8').split(' ')
                 if data[0] == 'F':  # F - gpredict ask for downlink
                     downlink = cut[len(cut)-1].replace('\n', '')
-                    retCode = setDownlinkFreq(sock_hamlib, downlink)
+                    retCode = setFreq(sock_hamlib, downlink, 'VFOA')
                     conn.send(retCode.encode())
                 if data[0] == 'I':  # I - gpredict ask for uplink
                     uplink = cut[len(cut)-1].replace('\n', '')
-                    retCode = setUplinkFreq(sock_hamlib, uplink)
+                    retCode = setFreq(sock_hamlib, uplink, 'VFOB')
                     conn.send(retCode.encode())
             elif data[0] in ['f', 'i']: # f, i
                 if data[0] == 'f':  # f - gpredict ask for downlink
